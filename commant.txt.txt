@@ -1,1 +1,0 @@
-$env:JADX_HOME = "C:\Users\irash\Documents\GitHub\jadx\build\jadx-dist\jadx-dev"; java -Xmx4g -cp "$env:JADX_HOME\lib\*" jadx.cli.JadxCLI --deobf --deobf-min 2 --deobf-max 64 -d "C:\Users\irash\Downloads\1_deobf" "C:\Users\irash\Downloads\1.apk" 2>&1
