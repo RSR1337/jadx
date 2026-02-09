@@ -1,0 +1,1 @@
+$env:JADX_HOME = "C:\Users\UrPc\Documents\GitHub\jadx\build\jadx-dist\jadx-dev"; java -Xmx4g -cp "$env:JADX_HOME\lib\*" jadx.cli.JadxCLI --deobf --show-bad-code -d "C:\Users\UrPC\Downloads\1_test_single" --single-class "A1c" "C:\Users\UrPC\Downloads\1.apk" 2>&1
