@@ -42,74 +42,8 @@ public class EnhancedAliasProvider implements IAliasProvider {
 
 	@Override
 	public String forPackage(PackageNode pkg) {
-		String originalName = pkg.getPkgInfo().getName();
-		String cleanedName = extractMeaningfulPart(originalName);
-
-		// If the cleaned name is empty or looks obfuscated, use a clean numbered name
-		if (cleanedName.isEmpty() || isObfuscatedPackageName(originalName)) {
-			return String.format("obfpkg%03d", pkgIndex++);
-		}
-
-		// Otherwise include the cleaned name part
-		return String.format("pkg%03d_%s", pkgIndex++, cleanedName);
-	}
-
-	/**
-	 * Check if a package name looks obfuscated.
-	 * Obfuscated packages are typically single letters, short meaningless names,
-	 * etc.
-	 */
-	private boolean isObfuscatedPackageName(String name) {
-		if (name == null || name.isEmpty()) {
-			return true;
-		}
-
-		// Single character names
-		if (name.length() == 1) {
-			return true;
-		}
-
-		// Very short names (2-3 chars) that don't look like words
-		if (name.length() <= 3) {
-			// Check if all lowercase or all uppercase (likely obfuscated)
-			if (name.matches("^[a-z]+$") || name.matches("^[A-Z]+$")) {
-				return true;
-			}
-			// Mixed case short names
-			if (name.matches("^[a-zA-Z]+$") && !isLikelyAbbreviation(name)) {
-				return true;
-			}
-		}
-
-		// Names starting with p/P followed by numbers (like p000, P001)
-		if (name.matches("^[pP][0-9]+.*")) {
-			return true;
-		}
-
-		// Names that are just letters and numbers with no pattern
-		if (name.matches("^[a-zA-Z][0-9]+$") || name.matches("^[a-z]{1,2}[A-Z][a-z]?$")) {
-			return true;
-		}
-
-		return false;
-	}
-
-	/**
-	 * Check if a short name might be a legitimate abbreviation (API, SDK, etc.)
-	 */
-	private boolean isLikelyAbbreviation(String name) {
-		String upper = name.toUpperCase();
-		String[] commonAbbreviations = {
-				"API", "SDK", "URL", "URI", "XML", "SQL", "DAO", "DTO", "RPC",
-				"GPS", "SMS", "MMS", "APP", "APK", "AAR", "JAR", "ZIP", "TAR",
-				"UI", "IO", "DB", "OS", "VM", "GC", "JIT", "AOT", "CPU", "GPU"
-		};
-		for (String abbr : commonAbbreviations) {
-			if (abbr.equals(upper)) {
-				return true;
-			}
-		}
-		return false;
+		String baseName = extractMeaningfulPart(pkg.getPkgInfo().getName());
+		return String.format("pkg%03d%s", pkgIndex++, formatNamePart(baseName));
 	}
 
 	@Override

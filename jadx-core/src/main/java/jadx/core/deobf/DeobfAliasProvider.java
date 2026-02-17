@@ -34,37 +34,7 @@ public class DeobfAliasProvider implements IAliasProvider {
 
 	@Override
 	public String forPackage(PackageNode pkg) {
-		String originalName = pkg.getPkgInfo().getName();
-		// Check if the original name looks obfuscated (single letter, short
-		// meaningless, etc.)
-		if (isObfuscatedPackageName(originalName)) {
-			// Generate a clean numbered name without the obfuscated suffix
-			return String.format("defpackage%03d", pkgIndex++);
-		}
-		// For non-obfuscated packages, include the cleaned name
-		return String.format("p%03d%s", pkgIndex++, prepareNamePart(originalName));
-	}
-
-	/**
-	 * Check if a package name looks obfuscated.
-	 */
-	private boolean isObfuscatedPackageName(String name) {
-		if (name == null || name.isEmpty()) {
-			return true;
-		}
-		// Single character names
-		if (name.length() == 1) {
-			return true;
-		}
-		// Very short names (2-3 chars) with no meaning
-		if (name.length() <= 3 && name.matches("^[a-zA-Z]+$")) {
-			return true;
-		}
-		// Names starting with p followed by numbers (like p000, P001)
-		if (name.matches("^[pP][0-9]+.*")) {
-			return true;
-		}
-		return false;
+		return String.format("p%03d%s", pkgIndex++, prepareNamePart(pkg.getPkgInfo().getName()));
 	}
 
 	@Override
