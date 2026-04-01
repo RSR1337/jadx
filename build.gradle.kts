@@ -8,7 +8,7 @@ import java.util.Locale
 plugins {
 	id("com.github.ben-manes.versions") version "0.53.0"
 	id("se.patrikerdes.use-latest-versions") version "0.2.19"
-	id("com.diffplug.spotless") version "6.25.0"
+	id("com.diffplug.spotless") version "8.4.0"
 }
 
 val jadxVersion by extra { System.getenv("JADX_VERSION") ?: "dev" }
@@ -98,7 +98,9 @@ val copyArtifacts by tasks.registering(Copy::class) {
 	from(tasks.getByPath(":jadx-cli:installShadowDist")) {
 		exclude("**/*.jar")
 		filter { line ->
-			jarCliPattern.matcher(line).replaceAll("jadx-$1-all.jar")
+			jarCliPattern
+				.matcher(line)
+				.replaceAll("jadx-$1-all.jar")
 				.replace("-jar \"\\\"\$CLASSPATH\\\"\"", "-cp \"\\\"\$CLASSPATH\\\"\" jadx.cli.JadxCLI")
 				.replace("-jar \"%CLASSPATH%\"", "-cp \"%CLASSPATH%\" jadx.cli.JadxCLI")
 		}
@@ -124,6 +126,13 @@ val pack by tasks.registering(Zip::class) {
 	from(copyArtifacts)
 	archiveFileName.set("jadx-$jadxVersion.zip")
 	destinationDirectory.set(layout.buildDirectory)
+	eachFile {
+		if (path == "bin/jadx" || path == "bin/jadx-gui") {
+			permissions {
+				unix("rwxr-xr-x")
+			}
+		}
+	}
 }
 
 val distWin by tasks.registering(Zip::class) {
